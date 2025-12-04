@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Excel to Comma Generator</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 720px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fafafa;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    label { font-size: 14px; }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .row { margin: 12px 0; }
+    input[type="text"] {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2563eb;
+      color: #fff;
+      font-size: 14px;
+    }
+    .copy-btn {
+      background: #111;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Excel → Comma Generator</h1>
+  <p>Paste Excel rows or tab-separated values and click Generate.</p>
+
+  <label>Paste your lines here:</label>
+  <textarea id="input" placeholder="example\nsample 1\nsample 2" rows="7"></textarea>
+
+  <div class="row">
+    <label>Separator:</label>
+    <input id="sep" type="text" value=", " style="width: 80px;">
+  </div>
+
+  <div class="row">
+    <label><input type="checkbox" id="removeSpaces" checked> Remove inner spaces</label><br>
+    <label><input type="checkbox" id="ignoreEmpty" checked> Ignore empty lines</label>
+  </div>
+
+  <button onclick="generate()">Generate</button>
+
+  <div class="row" style="margin-top:20px;">
+    <label>Result:</label>
+    <textarea id="output" rows="4" readonly></textarea>
+    <button class="copy-btn" onclick="copyOutput()">Copy</button>
+  </div>
+
+  <script>
+    function generate() {
+      let text = document.getElementById("input").value;
+
+      let parts = text.split(/\r?\n|\t|,/).map(s => s.trim());
+
+      if (document.getElementById("removeSpaces").checked) {
+        parts = parts.map(s => s.replace(/\s+/g, ""));
+      }
+
+      if (document.getElementById("ignoreEmpty").checked) {
+        parts = parts.filter(s => s.length > 0);
+      }
+
+      const sep = document.getElementById("sep").value;
+      document.getElementById("output").value = parts.join(sep);
+    }
+
+    function copyOutput() {
+      const out = document.getElementById("output");
+      out.select();
+      out.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+    }
+  </script>
+</body>
+</html>
